@@ -3,6 +3,13 @@ let allProducts = [];
 let filteredProducts = [];
 let categories = [];
 let currentCategory = 'all';
+let currentSort = 'default'; // 'default', 'asc', 'desc'
+
+// Sort products by price
+function sortProducts(order) {
+    currentSort = order;
+    filterAndRender();
+}
 
 // DOM Elements
 const productsGrid = document.getElementById('productsGrid');
@@ -83,13 +90,19 @@ function filterAndRender() {
         const categoryMatch = currentCategory === 'all' ||
             (product.category && product.category.id.toString() === currentCategory);
 
-        // Filter by search term
+        // Filter by search term (only search by title - name)
         const searchMatch = !searchTerm ||
-            product.title.toLowerCase().includes(searchTerm) ||
-            product.description.toLowerCase().includes(searchTerm);
+            product.title.toLowerCase().includes(searchTerm);
 
         return categoryMatch && searchMatch;
     });
+
+    // Sort products by price
+    if (currentSort === 'asc') {
+        filteredProducts.sort((a, b) => a.price - b.price);
+    } else if (currentSort === 'desc') {
+        filteredProducts.sort((a, b) => b.price - a.price);
+    }
 
     renderProducts();
     updateProductCount();
